@@ -1,0 +1,6 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: staging-test
+  labels:
+    name: staging-test

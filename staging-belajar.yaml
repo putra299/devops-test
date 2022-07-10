@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: staging-belajar
-          image: putradocler/hello-world:v0
+          image: putradocler/hello-world:v4
           env:
             - name: PORT
               value: "8181"
@@ -32,6 +32,9 @@ spec:
             limits:
               cpu: 1000m
               memory: 1000Mi
+          envFrom:
+            - configMapRef:
+                name: staging-belajar
 
 ---
 ## Service
@@ -47,8 +50,29 @@ spec:
   ports:
   - port: 8181
     name: http
-  selector:
-    app: staging-api-push
----
 
+--- # auto scaling pods 
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: staging-belajar
+  namespace: staging-test
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: staging-belajar
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+--- # ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: staging-belajar
+  namespace: staging-test
+data:
+  APPLICATION: Hello World
+  VERSION: 1.0.0
 

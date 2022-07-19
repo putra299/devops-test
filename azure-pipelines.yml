@@ -2,56 +2,67 @@
 # Build your Go project.
 # Add steps that test, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/go
-
+# SET UP GO
 trigger:
-#- master
-- feature/*
-
-#pr:
-#- master
+- main
 
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:  
-  GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
-  PLUGIN_DIR: '$(GOBIN)'
-  modulePath: '$(GOPATH)/src/hello' # Path to the module's code
+  GOROOT: '/usr/local/go1.11' # Go installation path
+  GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+  modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)' # Path to the module's code
 
 steps:
+- task: GoTool@0
+  inputs:
+    version: '1.13.5'
+- task: Go@0
+  inputs:
+    command: 'get'
+    arguments: '-d'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+  # BUILD
+- task: Go@0
+  inputs:
+    command: 'build'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+- task: CopyFiles@2
+  inputs:
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+     artifactName: drop
+- task: Go@0
+  inputs:
+    command: 'build'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
 - script: |
-    echo "GOBIN $(GOBIN)"
-    echo "GOPATH $(GOPATH)"
-    echo "REPO PATH $(GOPATH)/src/github.com/$(build.repository.name)"
-    mkdir -p '$(GOPATH)'
     mkdir -p '$(GOBIN)'
     mkdir -p '$(GOPATH)/pkg'
     mkdir -p '$(modulePath)'
-    echo "Moving $(system.defaultWorkingDirectory)/* To $(modulePath)"
-    mv $(system.defaultWorkingDirectory)/* $(modulePath)
     shopt -s extglob
     shopt -s dotglob
+    mv !(gopath) '$(modulePath)'
     echo '##vso[task.prependpath]$(GOBIN)'
     echo '##vso[task.prependpath]$(GOROOT)/bin'
   displayName: 'Set up the Go workspace'
 
 - script: |
     go version
+    go get -v -t -d ./...
     if [ -f Gopkg.toml ]; then
         curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
         dep ensure
-    else
-      echo "ERROR no Gopkg.toml found!"
-      exit 1
     fi
-    go install hello/src/hello
-  workingDirectory: '$(GOPATH)/src/hello'
+    go build -v .
+  workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies, then build'
-
-- script: |
-    $(GOBIN)/hello &
-    PS=`ps -ef |grep hello |grep -v grep |awk '{print $2}'`
-    echo "hello $PS"
-    curl http://localhost:8000/status
-    kill -9 $PS
+  # TEST
+- task: Go@0
+  inputs:
+    command: 'test'
+    arguments: '-v'
+    workingDirectory: '$(modulePath)'

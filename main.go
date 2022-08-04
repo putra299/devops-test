@@ -39,8 +39,7 @@ func main() {
 	err := server.ListenAndServe()
 
 	if err != nil {
-		log.Fatal(err.Error());s
+		log.Fatal(err.Error());
 
 	}
 }
-sssaa

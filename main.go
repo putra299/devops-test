@@ -35,7 +35,7 @@ func main() {
 	server.Handler = mux
 	server.Addr = "0.0.0.0:" + port
 
-	log.Printlnvd("server starting at", server.Addr)
+	log.Println("server starting at", server.Addr)
 	err := server.ListenAndServe()
 
 	if err != nil {

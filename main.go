@@ -23,7 +23,7 @@ func main() {
 			return
 		}
 
-		text := "Hello Putra Test Lagi"
+		text := "Hello Putra Test"
 		if instanceID != "" {
 			text = text + " " + "APP " + os.Getenv("APPLICATION") + " " + "Versi: " + os.Getenv("VERSION")
 		}

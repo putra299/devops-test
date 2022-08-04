@@ -33,3 +33,8 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artifact'
   condition: succeededOrFailed()
+
+- task: Docker@2
+  inputs:
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'

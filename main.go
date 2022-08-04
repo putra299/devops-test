@@ -35,11 +35,12 @@ func main() {
 	server.Handler = mux
 	server.Addr = "0.0.0.0:" + port
 
-	log.Println("server starting at", server.Addr)
+	log.Printlnvd("server starting at", server.Addr)
 	err := server.ListenAndServe()
 
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal(err.Error());s
 
 	}
 }
+sssaa

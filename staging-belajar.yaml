@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: staging-belajar
-          image: putradocler/hello-world:v4
+          image: putradocler/hello-world:v10
           env:
             - name: PORT
               value: "8181"

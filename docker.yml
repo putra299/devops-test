@@ -1,6 +1,0 @@
-- task: Docker@2
-  inputs:
-    containerRegistry: 'PutraDevOpsConnection'
-    repository: 'putradocler/hello-world'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'

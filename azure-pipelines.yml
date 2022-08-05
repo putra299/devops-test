@@ -40,5 +40,3 @@ steps:
     repository: 'putradocler/hello-world'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
-    tags: |
-      v9

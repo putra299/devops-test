@@ -38,3 +38,13 @@ steps:
   inputs:
     command: 'buildAndPush'
     Dockerfile: './Dockerfile'
+
+- task: Docker@2
+  displayName: Push image
+  inputs:
+    containerRegistry: |
+      $(dockerHub)
+    repository: $(imageName)
+    command: push
+    tags: |
+      v9

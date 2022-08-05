@@ -40,11 +40,8 @@ steps:
     Dockerfile: './Dockerfile'
 
 - task: Docker@2
-  displayName: Push image
   inputs:
-    containerRegistry: |
-      $(dockerHub)
-    repository: $(imageName)
-    command: push
-    tags: |
-      v9
+    containerRegistry: 'PutraDevOpsConnection'
+    repository: 'putradocler/hello-world'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
